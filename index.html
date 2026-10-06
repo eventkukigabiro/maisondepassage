@@ -615,7 +615,7 @@
       <li><a href="#contact">Contact</a></li>
     </ul>
     <div class="nav-cta">
-      <a href="tel:+25700000000" class="btn btn-ghost">Appeler</a>
+      <a href="tel:+25766575615" class="btn btn-ghost">Appeler</a>
       <a href="#contact" class="btn btn-gold">Réserver</a>
       <button class="burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false">
         <span></span><span></span><span></span>
@@ -628,7 +628,7 @@
     <a href="#galerie">Galerie</a>
     <a href="#localisation">Localisation</a>
     <a href="#contact">Contact</a>
-    <a href="tel:+25700000000" class="btn btn-gold">Appeler maintenant</a>
+    <a href="tel:+25766575615" class="btn btn-gold">Appeler maintenant</a>
   </div>
 </header>
 
@@ -643,7 +643,7 @@
         <p class="hero-lede">New Palace accueille ses hôtes à toute heure, dans un quartier calme et sécurisé de Kigobe, tout près de l'Hôtel Dorcha Vita. Une chambre propre, un tarif clair, une porte qui ne ferme jamais.</p>
         <div class="hero-actions">
           <a href="#contact" class="btn btn-gold">Réserver une chambre</a>
-          <a href="https://wa.me/25700000000" target="_blank" rel="noopener" class="btn btn-ghost">Écrire sur WhatsApp</a>
+          <a href="https://wa.me/25766575615" target="_blank" rel="noopener" class="btn btn-ghost">Écrire sur WhatsApp</a>
         </div>
         <div class="hero-facts">
           <div class="hero-fact"><b>24 / 24</b><small>Ouvert jour &amp; nuit</small></div>
@@ -842,11 +842,11 @@
         <p>Un message ou un appel suffit. Nous confirmons la disponibilité immédiatement, à toute heure.</p>
         <div class="contact-detail">
           <span class="k">Téléphone</span>
-          <span class="v"><a href="tel:+25700000000">+257 00 00 00 00</a></span>
+          <span class="v"><a href="tel:+25766575615">+257 66 57 56 15</a></span>
         </div>
         <div class="contact-detail">
           <span class="k">WhatsApp</span>
-          <span class="v"><a href="https://wa.me/25700000000" target="_blank" rel="noopener">+257 00 00 00 00</a></span>
+          <span class="v"><a href="https://wa.me/25766575615" target="_blank" rel="noopener">+257 66 57 56 15</a></span>
         </div>
         <div class="contact-detail">
           <span class="k">Adresse</span>
@@ -966,7 +966,7 @@
   // Formulaire -> enregistrement en base (Supabase) + message WhatsApp pré-rempli
   const form = document.getElementById('bookingForm');
   const status = document.getElementById('formStatus');
-  const WHATSAPP_NUMBER = "25700000000"; // remplacer par le vrai numéro (format international, sans + ni espaces)
+  const WHATSAPP_NUMBER = "25766575615"; // remplacer par le vrai numéro (format international, sans + ni espaces)
   const SUPABASE_URL = "https://uutauzzxshyamhcpmxkw.supabase.co";
   const SUPABASE_KEY = "sb_publishable_arwvqfOH5aAO4Ih7qNzucA_oIHvRpgy";
 
@@ -1014,6 +1014,386 @@
     window.open(url, '_blank', 'noopener');
     form.reset();
   });
+</script>
+
+
+<!-- ============ ADMIN (accessible via /#admin) ============ -->
+<div id="adminHost" hidden></div>
+
+<template id="adminTpl">
+<style>
+  :host{
+    --bg-deep:#10142A; --bg-panel:#171C3B; --bg-panel-light:#232A54;
+    --line:rgba(243,238,226,0.12); --gold:#C9A24B; --gold-soft:rgba(201,162,75,0.16);
+    --teal:#6FA88F; --red:#D26A6A; --cream:#F3EEE2; --muted:#A9AFC9; --radius:6px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  .root{background:var(--bg-deep);color:var(--cream);font-family:'Inter',system-ui,sans-serif;line-height:1.5;min-height:100%}
+  h1{font-family:'Fraunces',Georgia,serif;font-weight:600}
+  .hidden{display:none !important}
+  button,input,select{font:inherit;color:inherit}
+
+  .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+  .login{background:var(--bg-panel);border:1px solid var(--line);border-radius:var(--radius);padding:32px 28px;width:100%;max-width:380px}
+  .login h1{font-size:1.6rem;margin-bottom:4px}
+  .login p.sub{color:var(--muted);font-size:.9rem;margin-bottom:22px}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .field input{width:100%;background:var(--bg-deep);border:1px solid var(--line);border-radius:var(--radius);padding:11px 12px}
+  .field input:focus,.toolbar input:focus,select:focus{outline:2px solid var(--gold);outline-offset:1px}
+  .btn{background:var(--gold);color:#10142A;border:0;border-radius:var(--radius);padding:11px 16px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block}
+  .btn:hover{filter:brightness(1.08)}
+  .btn:disabled{opacity:.6;cursor:wait}
+  .btn-ghost{background:transparent;color:var(--cream);border:1px solid var(--line)}
+  .btn-ghost:hover{border-color:var(--gold);filter:none}
+  .btn-danger{background:transparent;color:var(--red);border:1px solid rgba(210,106,106,.4)}
+  .btn-danger:hover{background:rgba(210,106,106,.12);filter:none}
+  .msg{font-size:.88rem;margin-top:12px;min-height:1.2em;color:var(--red)}
+  .back{display:block;text-align:center;margin-top:16px;color:var(--muted);font-size:.85rem;background:none;border:0;cursor:pointer;width:100%}
+  .back:hover{color:var(--gold)}
+
+  .top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line);background:var(--bg-panel);position:sticky;top:0;z-index:5;flex-wrap:wrap}
+  .top h1{font-size:1.25rem}
+  .top h1 span{color:var(--gold)}
+  .top-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .who{color:var(--muted);font-size:.8rem;display:none}
+  @media(min-width:800px){.who{display:inline}}
+  .wrap{max-width:1000px;margin:0 auto;padding:20px}
+
+  .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px}
+  @media(min-width:700px){.stats{grid-template-columns:repeat(4,1fr)}}
+  .stat{background:var(--bg-panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px}
+  .stat .n{font-family:'Fraunces',serif;font-size:1.9rem;line-height:1}
+  .stat .l{color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;margin-top:6px}
+  .stat.new .n{color:var(--gold)} .stat.ok .n{color:var(--teal)} .stat.no .n{color:var(--red)}
+
+  .toolbar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+  .toolbar input[type=search]{flex:1;min-width:180px;background:var(--bg-panel);border:1px solid var(--line);border-radius:var(--radius);padding:10px 12px}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap}
+  .tab{background:transparent;border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:.85rem;cursor:pointer;color:var(--muted)}
+  .tab.active{background:var(--gold-soft);border-color:var(--gold);color:var(--cream)}
+
+  .list{display:grid;gap:12px}
+  .card{background:var(--bg-panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;display:grid;gap:10px}
+  .card.is-new{border-left:3px solid var(--gold)}
+  .card.is-ok{border-left:3px solid var(--teal)}
+  .card.is-no{border-left:3px solid var(--red);opacity:.8}
+  .card-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+  .card-head .name{font-weight:600;font-size:1.05rem}
+  .badge{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;padding:3px 9px;border-radius:999px;border:1px solid var(--line)}
+  .badge.nouveau{color:var(--gold);border-color:var(--gold)}
+  .badge.confirmé{color:var(--teal);border-color:var(--teal)}
+  .badge.annulé{color:var(--red);border-color:var(--red)}
+  .meta{display:grid;gap:4px;font-size:.92rem}
+  .meta .k{color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;margin-right:6px}
+  .meta a{color:var(--gold);text-decoration:none}
+  .meta a:hover{text-decoration:underline}
+  .note{background:var(--bg-deep);border-radius:var(--radius);padding:10px 12px;font-size:.9rem;color:var(--cream);white-space:pre-wrap;word-break:break-word}
+  .card-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .card-actions select{background:var(--bg-deep);border:1px solid var(--line);border-radius:var(--radius);padding:8px 10px}
+  .card-actions .btn{padding:8px 12px;font-size:.88rem}
+  .spacer{flex:1}
+  .empty{text-align:center;color:var(--muted);padding:40px 10px;border:1px dashed var(--line);border-radius:var(--radius)}
+  .created{color:var(--muted);font-size:.78rem}
+  .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--bg-panel-light);border:1px solid var(--line);padding:10px 16px;border-radius:var(--radius);font-size:.9rem;z-index:20}
+</style>
+
+<div class="root">
+  <div class="login-wrap" id="loginView">
+    <form class="login" id="loginForm">
+      <h1>New Palace</h1>
+      <p class="sub">Espace administrateur — réservations</p>
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" autocomplete="current-password" required>
+      </div>
+      <button class="btn" type="submit" id="loginBtn" style="width:100%">Se connecter</button>
+      <p class="msg" id="loginMsg"></p>
+      <button class="back" type="button" id="backLogin">← Retour au site</button>
+    </form>
+  </div>
+
+  <div class="hidden" id="appView">
+    <div class="top">
+      <h1>New Palace <span>· Réservations</span></h1>
+      <div class="top-actions">
+        <span class="who" id="who"></span>
+        <button class="btn btn-ghost" id="refreshBtn" type="button">Actualiser</button>
+        <button class="btn btn-ghost" id="siteBtn" type="button">Voir le site</button>
+        <button class="btn btn-ghost" id="logoutBtn" type="button">Déconnexion</button>
+      </div>
+    </div>
+    <div class="wrap">
+      <div class="stats">
+        <div class="stat"><div class="n" id="sTotal">0</div><div class="l">Total</div></div>
+        <div class="stat new"><div class="n" id="sNew">0</div><div class="l">Nouvelles</div></div>
+        <div class="stat ok"><div class="n" id="sOk">0</div><div class="l">Confirmées</div></div>
+        <div class="stat no"><div class="n" id="sNo">0</div><div class="l">Annulées</div></div>
+      </div>
+      <div class="toolbar">
+        <input type="search" id="search" placeholder="Rechercher (nom, téléphone, message)...">
+        <div class="tabs" id="tabs">
+          <button class="tab active" data-f="all" type="button">Toutes</button>
+          <button class="tab" data-f="nouveau" type="button">Nouvelles</button>
+          <button class="tab" data-f="confirmé" type="button">Confirmées</button>
+          <button class="tab" data-f="annulé" type="button">Annulées</button>
+        </div>
+      </div>
+      <div class="list" id="list"></div>
+    </div>
+  </div>
+  <div class="toast hidden" id="toast"></div>
+</div>
+</template>
+
+<script>
+(function () {
+  var SUPABASE_URL = "https://uutauzzxshyamhcpmxkw.supabase.co";
+  var SUPABASE_KEY = "sb_publishable_arwvqfOH5aAO4Ih7qNzucA_oIHvRpgy";
+  var STATUTS = ["nouveau", "confirmé", "annulé"];
+
+  var host = document.getElementById('adminHost');
+  var tpl = document.getElementById('adminTpl');
+  host.style.cssText = "position:fixed;inset:0;z-index:99999;overflow:auto;background:#10142A";
+
+  var root = null, sb = null, rows = [], filter = "all", timer = null;
+  function $(id) { return root.getElementById(id); }
+
+  function loadLib() {
+    return new Promise(function (resolve, reject) {
+      if (window.supabase) return resolve();
+      var s = document.createElement('script');
+      s.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+      s.onload = resolve;
+      s.onerror = function () { reject(new Error("lib")); };
+      document.head.appendChild(s);
+    });
+  }
+
+  async function openAdmin() {
+    host.hidden = false;
+    document.body.style.overflow = 'hidden';
+    if (!root) {
+      root = host.attachShadow({ mode: 'open' });
+      root.appendChild(tpl.content.cloneNode(true));
+      bind();
+    }
+    if (!sb) {
+      try { await loadLib(); }
+      catch (e) { $("loginMsg").textContent = "Impossible de charger le module de connexion (vérifie ta connexion internet)."; return; }
+      sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    }
+    var res = await sb.auth.getSession();
+    if (res.data.session) showApp(); else showLogin();
+  }
+
+  function closeAdmin() {
+    host.hidden = true;
+    document.body.style.overflow = '';
+    clearInterval(timer);
+  }
+
+  function leaveAdmin() {
+    history.pushState('', document.title, location.pathname + location.search);
+    closeAdmin();
+  }
+
+  function checkHash() {
+    if (location.hash === '#admin') openAdmin(); else closeAdmin();
+  }
+
+  function toast(text) {
+    var t = $("toast");
+    t.textContent = text;
+    t.classList.remove("hidden");
+    clearTimeout(toast._t);
+    toast._t = setTimeout(function () { t.classList.add("hidden"); }, 2500);
+  }
+
+  function showLogin() {
+    clearInterval(timer);
+    rows = [];
+    $("appView").classList.add("hidden");
+    $("loginView").classList.remove("hidden");
+  }
+
+  async function showApp() {
+    var res = await sb.auth.getSession();
+    if (!res.data.session) return showLogin();
+    $("who").textContent = res.data.session.user.email;
+    $("loginView").classList.add("hidden");
+    $("appView").classList.remove("hidden");
+    await load();
+    clearInterval(timer);
+    timer = setInterval(function () { load(); }, 60000);
+  }
+
+  async function load(manual) {
+    var res = await sb.from("reservations").select("*").order("created_at", { ascending: false }).limit(500);
+    if (res.error) {
+      var list = $("list");
+      list.innerHTML = "";
+      list.appendChild(el("div", "empty", "Impossible de charger les réservations (accès refusé ou erreur réseau)."));
+      return;
+    }
+    rows = res.data || [];
+    render();
+    if (manual) toast("Liste actualisée");
+  }
+
+  async function setStatus(id, status) {
+    var res = await sb.from("reservations").update({ status: status }).eq("id", id);
+    if (res.error) { toast("Échec de la mise à jour"); return; }
+    var r = rows.find(function (x) { return x.id === id; });
+    if (r) r.status = status;
+    render();
+    toast("Statut : " + status);
+  }
+
+  async function removeRow(id) {
+    if (!confirm("Supprimer définitivement cette réservation ?")) return;
+    var res = await sb.from("reservations").delete().eq("id", id);
+    if (res.error) { toast("Échec de la suppression"); return; }
+    rows = rows.filter(function (x) { return x.id !== id; });
+    render();
+    toast("Réservation supprimée");
+  }
+
+  function fmtArrival(iso) {
+    var p = String(iso).split("-").map(Number);
+    if (!p[0]) return iso;
+    return new Date(p[0], p[1] - 1, p[2]).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  }
+  function fmtCreated(iso) {
+    return new Date(iso).toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
+  }
+  function waNumber(phone) {
+    var d = String(phone).replace(/\D/g, "");
+    if (d.indexOf("00") === 0) d = d.slice(2);
+    if (d.length === 8) d = "257" + d;
+    return d;
+  }
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text !== undefined) n.textContent = text;
+    return n;
+  }
+  function metaLine(label, content) {
+    var line = el("div");
+    line.appendChild(el("span", "k", label));
+    if (typeof content === "string") line.appendChild(document.createTextNode(content));
+    else line.appendChild(content);
+    return line;
+  }
+
+  function render() {
+    var count = function (s) { return rows.filter(function (r) { return r.status === s; }).length; };
+    $("sTotal").textContent = rows.length;
+    $("sNew").textContent = count("nouveau");
+    $("sOk").textContent = count("confirmé");
+    $("sNo").textContent = count("annulé");
+
+    var q = $("search").value.trim().toLowerCase();
+    var shown = rows.filter(function (r) {
+      if (filter !== "all" && r.status !== filter) return false;
+      if (!q) return true;
+      return [r.name, r.phone, r.message].join(" ").toLowerCase().indexOf(q) !== -1;
+    });
+
+    var list = $("list");
+    list.innerHTML = "";
+    if (!shown.length) {
+      list.appendChild(el("div", "empty", rows.length ? "Aucun résultat pour ce filtre." : "Aucune réservation pour le moment."));
+      return;
+    }
+
+    shown.forEach(function (r) {
+      var cls = r.status === "confirmé" ? "is-ok" : r.status === "annulé" ? "is-no" : "is-new";
+      var card = el("article", "card " + cls);
+
+      var head = el("div", "card-head");
+      head.appendChild(el("div", "name", r.name));
+      head.appendChild(el("span", "badge " + r.status, r.status));
+      card.appendChild(head);
+
+      var meta = el("div", "meta");
+      meta.appendChild(metaLine("Arrivée", fmtArrival(r.arrival_date)));
+      var tel = el("a", null, r.phone);
+      tel.href = "tel:" + String(r.phone).replace(/[^\d+]/g, "");
+      meta.appendChild(metaLine("Téléphone", tel));
+      card.appendChild(meta);
+
+      if (r.message) card.appendChild(el("div", "note", r.message));
+      card.appendChild(el("div", "created", "Reçue le " + fmtCreated(r.created_at)));
+
+      var actions = el("div", "card-actions");
+      var sel = el("select");
+      STATUTS.forEach(function (s) {
+        var o = el("option", null, s);
+        o.value = s;
+        if (s === r.status) o.selected = true;
+        sel.appendChild(o);
+      });
+      sel.addEventListener("change", function () { setStatus(r.id, sel.value); });
+      actions.appendChild(sel);
+
+      var wa = el("a", "btn btn-ghost", "WhatsApp");
+      wa.href = "https://wa.me/" + waNumber(r.phone);
+      wa.target = "_blank";
+      wa.rel = "noopener";
+      actions.appendChild(wa);
+
+      actions.appendChild(el("span", "spacer"));
+      var del = el("button", "btn btn-danger", "Supprimer");
+      del.type = "button";
+      del.addEventListener("click", function () { removeRow(r.id); });
+      actions.appendChild(del);
+
+      card.appendChild(actions);
+      list.appendChild(card);
+    });
+  }
+
+  function bind() {
+    $("loginForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      var btn = $("loginBtn"), msg = $("loginMsg");
+      msg.textContent = "";
+      btn.disabled = true;
+      btn.textContent = "Connexion...";
+      var res = await sb.auth.signInWithPassword({
+        email: $("email").value.trim(),
+        password: $("password").value
+      });
+      btn.disabled = false;
+      btn.textContent = "Se connecter";
+      if (res.error) { msg.textContent = "Email ou mot de passe incorrect."; return; }
+      $("password").value = "";
+      showApp();
+    });
+    $("logoutBtn").addEventListener("click", async function () { await sb.auth.signOut(); showLogin(); });
+    $("refreshBtn").addEventListener("click", function () { load(true); });
+    $("siteBtn").addEventListener("click", leaveAdmin);
+    $("backLogin").addEventListener("click", leaveAdmin);
+    $("search").addEventListener("input", render);
+    $("tabs").addEventListener("click", function (e) {
+      var b = e.target.closest(".tab");
+      if (!b) return;
+      root.querySelectorAll(".tab").forEach(function (t) { t.classList.remove("active"); });
+      b.classList.add("active");
+      filter = b.dataset.f;
+      render();
+    });
+  }
+
+  window.addEventListener("hashchange", checkHash);
+  checkHash();
+})();
 </script>
 
 </body>
