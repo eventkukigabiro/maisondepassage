@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -962,10 +963,12 @@
     if (e.key === 'ArrowRight') showRelative(1);
   });
 
-  // Formulaire -> message WhatsApp pré-rempli
+  // Formulaire -> enregistrement en base (Supabase) + message WhatsApp pré-rempli
   const form = document.getElementById('bookingForm');
   const status = document.getElementById('formStatus');
   const WHATSAPP_NUMBER = "25700000000"; // remplacer par le vrai numéro (format international, sans + ni espaces)
+  const SUPABASE_URL = "https://uutauzzxshyamhcpmxkw.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_arwvqfOH5aAO4Ih7qNzucA_oIHvRpgy";
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
@@ -980,6 +983,24 @@
       return;
     }
 
+    // 1) Enregistrement dans la base (n'empêche pas l'envoi WhatsApp en cas d'échec)
+    fetch(`${SUPABASE_URL}/rest/v1/reservations`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        name: name,
+        phone: phone,
+        arrival_date: date,
+        message: message || null
+      }),
+      keepalive: true
+    }).catch(function (err) { console.error('Enregistrement échoué :', err); });
+
+    // 2) Redirection WhatsApp
     const text =
       `Bonjour New Palace, je souhaite réserver une chambre.\n` +
       `Nom : ${name}\n` +
@@ -988,7 +1009,7 @@
       (message ? `\nMessage : ${message}` : '');
 
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
-    status.textContent = "Redirection vers WhatsApp...";
+    status.textContent = "Réservation enregistrée. Redirection vers WhatsApp...";
     status.className = "form-status ok";
     window.open(url, '_blank', 'noopener');
     form.reset();
